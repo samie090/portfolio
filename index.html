@@ -274,41 +274,47 @@ const projects = [
     image: "images/WhatsApp AI Agent.png",
     images: ["images/2 WhatsApp Agent.png", "images/3 WhatsApp Agent.png", "images/4 WhatsApp Agent.png", "images/5 WhatsApp Agent.png"],
     video: "https://youtu.be/sZIYoUcPDRM",
-    details: [
-    "## Overview",
-    "This project connects a business WhatsApp number to an AI agent so that customers can get instant answers and place orders in a normal chat. Messages are received through Meta's webhook, processed by an LLM-powered agent (MiniMax-M3, via the n8n AI Agent node, with tool calling and conversation memory) with access to business data, and answered through the WhatsApp Cloud API. No human has to be online for routine enquiries.",
+      html: `
+<h2 class="sec">Overview</h2>
+<p>This project connects a business WhatsApp number to an AI agent so that customers can get instant answers and place orders in a normal chat. Messages are received through Meta's webhook, processed by an LLM-powered agent (MiniMax-M3, via the n8n AI Agent node, with tool calling and conversation memory) with access to business data, and answered through the WhatsApp Cloud API. No human has to be online for routine enquiries.</p>
 
-    "## Key functionality",
-    "- **Real-time messaging:** Incoming WhatsApp messages trigger the workflow through a Meta webhook, and replies are sent back via the Graph API.",
-    "- **AI conversation handling:** An LLM (MiniMax-M3) agent understands free-form messages and writes natural replies.",
-    "- **Per-customer memory:** Conversation context is stored per sender number, so each customer has a continuous conversation.",
-    "- **Inventory lookup:** The agent reads live product and stock data from Google Sheets.",
-    "- **FAQ answering:** Business policies and common questions are served from a maintained FAQ sheet.",
-    "- **Order capture:** Confirmed orders are written to a Google Sheet for fulfilment.",
-    "- **Event filtering:** Delivery and read receipts sent by Meta are filtered out, so only genuine customer messages reach the AI.",
+<h2 class="sec">Key functionality</h2>
+<ul class="bul">
+  <li><b>Real-time messaging:</b> Incoming WhatsApp messages trigger the workflow through a Meta webhook, and replies are sent back via the Graph API.</li>
+  <li><b>AI conversation handling:</b> An LLM (MiniMax-M3) agent understands free-form messages and writes natural replies.</li>
+  <li><b>Per-customer memory:</b> Conversation context is stored per sender number, so each customer has a continuous conversation.</li>
+  <li><b>Inventory lookup:</b> The agent reads live product and stock data from Google Sheets.</li>
+  <li><b>FAQ answering:</b> Business policies and common questions are served from a maintained FAQ sheet.</li>
+  <li><b>Order capture:</b> Confirmed orders are written to a Google Sheet for fulfilment.</li>
+  <li><b>Event filtering:</b> Delivery and read receipts sent by Meta are filtered out, so only genuine customer messages reach the AI.</li>
+</ul>
 
-    "## Technology",
-    "n8n (workflow automation), Meta WhatsApp Cloud API and Graph API, webhooks, an LLM (MiniMax-M3) chat model with tool calling, Google Sheets, and Postman (for API and webhook testing).",
+<h2 class="sec">Technology</h2>
+<p>n8n (workflow automation), Meta WhatsApp Cloud API and Graph API, webhooks, an LLM (MiniMax-M3) chat model with tool calling, Google Sheets, and Postman (for API and webhook testing).</p>
 
-    "## Engineering highlights",
-    "- Configured the end-to-end webhook chain: callback registration, event subscriptions and linking the WhatsApp Business Account to the app.",
-    "- Diagnosed and resolved subscription conflicts that blocked incoming messages, using the Graph API to inspect which app received events.",
-    "- Handled the WhatsApp 24-hour customer service window and message template rules in the design.",
-    "- Used Postman to simulate Meta's verification (GET) and message (POST) requests when debugging.",
+<h2 class="sec">Engineering highlights</h2>
+<ul class="bul">
+  <li>Configured the end-to-end webhook chain: callback registration, event subscriptions and linking the WhatsApp Business Account to the app.</li>
+  <li>Diagnosed and resolved subscription conflicts that blocked incoming messages, using the Graph API to inspect which app received events.</li>
+  <li>Handled the WhatsApp 24-hour customer service window and message template rules in the design.</li>
+  <li>Used Postman to simulate Meta's verification (GET) and message (POST) requests when debugging.</li>
+</ul>
 
-    "## Current scope and status",
-    "The project is a working prototype running on Meta's sandbox test number, which can message only a small list of verified recipients. It demonstrates the full request-and-reply cycle, and it is ready to move to a registered business number for live use.",
+<h2 class="sec">Current scope and status</h2>
+<p>The project is a working prototype running on Meta's sandbox test number, which can message only a small list of verified recipients. It demonstrates the full request-and-reply cycle, and it is ready to move to a registered business number for live use.</p>
 
-    "## Future scope",
-    "- **Production rollout:** Register a dedicated business number, complete business verification, and use a permanent System User access token.",
-    "- **Payments:** Add payment links or integrate a payment gateway, with order confirmations sent as approved message templates.",
-    "- **Multilingual support:** Understand and reply in multiple languages, for example English and Urdu.",
-    "- **Rich media:** Send product images and catalogues, and transcribe voice notes.",
-    "- **Human handoff:** Escalate complex or sensitive conversations to a staff member, with the chat history attached.",
-    "- **Scalable data layer:** Replace Google Sheets with a database such as PostgreSQL or Airtable, and connect a CRM.",
-    "- **Analytics and quality:** Track conversation volume, resolution rate and orders, and add automated evaluation of the AI's answers.",
-    "- **Proactive messaging:** Order status updates, restock alerts and reminders using template messages."
-  ],
+<h2 class="sec">Future scope</h2>
+<ul class="bul">
+  <li><b>Production rollout:</b> Register a dedicated business number, complete business verification, and use a permanent System User access token.</li>
+  <li><b>Payments:</b> Add payment links or integrate a payment gateway, with order confirmations sent as approved message templates.</li>
+  <li><b>Multilingual support:</b> Understand and reply in multiple languages, for example English and Urdu.</li>
+  <li><b>Rich media:</b> Send product images and catalogues, and transcribe voice notes.</li>
+  <li><b>Human handoff:</b> Escalate complex or sensitive conversations to a staff member, with the chat history attached.</li>
+  <li><b>Scalable data layer:</b> Replace Google Sheets with a database such as PostgreSQL or Airtable, and connect a CRM.</li>
+  <li><b>Analytics and quality:</b> Track conversation volume, resolution rate and orders, and add automated evaluation of the AI's answers.</li>
+  <li><b>Proactive messaging:</b> Order status updates, restock alerts and reminders using template messages.</li>
+</ul>
+`,
     tools: ["n8n", "OpenAI", "Gmail", "Google Sheets"]
   }
 ];
