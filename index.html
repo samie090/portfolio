@@ -403,6 +403,89 @@ const projects = [
 </ul>
 `
 },
+  {
+  title: "RAG-Based Document Question-Answering System",
+  tag: "n8n",
+  description: "A Retrieval-Augmented Generation system where a user uploads a PDF and asks questions in plain language. Answers are grounded in the document, built with n8n, Google Gemini and a simple web interface.",
+  image: "images/RAG.jpg",
+  html: `
+<h2 class="sec">Overview</h2>
+<p>This project is a Retrieval-Augmented Generation (RAG) system that lets a user upload a PDF and ask questions about its contents in plain language. Instead of relying only on a language model’s general knowledge, the system reads the uploaded document, indexes it, and grounds every answer in the text it actually contains. The result is accurate, document-specific responses with far less risk of fabricated information.</p>
+<p>The system has two parts: a clean, dark-themed web interface (index.html) for the user, and an automated backend workflow built in n8n that handles document processing, retrieval, and answer generation.</p>
+
+<h2 class="sec">User Interface</h2>
+<p>The front end is a single-page web interface with a modern, minimal design: a dark background, a centered card, and an indigo accent color. It contains three elements:</p>
+<ul class="bul">
+  <li><b>Source Document:</b> a file picker where the user selects the PDF to analyze.</li>
+  <li><b>Your Query:</b> a text field for the question, with a placeholder example such as “What is the launch date?”</li>
+  <li><b>Analyze Document:</b> a single action button that submits both the file and the question to the backend.</li>
+</ul>
+<p>When the button is pressed, the page sends the PDF and the query together in one POST request to the backend webhook, then displays the answer returned.</p>
+
+<h2 class="sec">Backend Architecture</h2>
+<p>The backend is an n8n workflow made of the following stages:</p>
+<ul class="bul">
+  <li><b>Webhook (POST):</b> Receives the uploaded PDF and the user’s query from the interface. It acts as the entry point of the whole pipeline.</li>
+  <li><b>Extract from File (PDF):</b> Pulls the raw text out of the uploaded PDF so it can be processed.</li>
+  <li><b>Simple Vector Store (with Default Data Loader and Google Gemini Embeddings):</b> The extracted text is split into smaller chunks by the data loader. Each chunk is converted into a numerical vector (an embedding) by the Google Gemini embedding model, capturing its semantic meaning. These vectors are stored in an in-memory vector store, which makes the document searchable by meaning rather than just by keywords.</li>
+  <li><b>AI Agent:</b> The central reasoning component. It receives the user’s question and coordinates three connected resources:
+    <ul class="bul">
+      <li><b>Google Gemini Chat Model:</b> the language model that interprets the question and composes the final answer.</li>
+      <li><b>Simple Memory:</b> short-term conversational memory so the agent can keep context within a session.</li>
+      <li><b>Get Vectors (tool):</b> a retrieval tool, paired with its own Gemini embeddings model, that the agent calls to search the vector store. The question is embedded, compared against the stored chunks, and the most relevant passages are returned.</li>
+    </ul>
+  </li>
+  <li><b>Respond to Webhook:</b> Sends the agent’s final answer back to the web interface, where it is shown to the user.</li>
+</ul>
+
+<h2 class="sec">How It Works, Step by Step</h2>
+<ul class="bul">
+  <li><b>Step 1:</b> The user selects a PDF and types a question in the interface.</li>
+  <li><b>Step 2:</b> The interface sends both to the webhook.</li>
+  <li><b>Step 3:</b> The workflow extracts the PDF text, chunks it, embeds it, and stores it as vectors.</li>
+  <li><b>Step 4:</b> The AI Agent receives the question and uses the retrieval tool to find the passages most relevant to it.</li>
+  <li><b>Step 5:</b> Using those passages as context, the Gemini chat model generates a grounded answer.</li>
+  <li><b>Step 6:</b> The answer is returned to the interface and displayed.</li>
+</ul>
+
+<h2 class="sec">Key Features</h2>
+<ul class="bul">
+  <li><b>Natural-language querying:</b> ask questions the way you would ask a person, with no need to search manually through pages.</li>
+  <li><b>Grounded answers:</b> responses are based on retrieved content from the uploaded document, which reduces hallucination.</li>
+  <li><b>Semantic search:</b> vector embeddings find relevant passages by meaning, even when the wording of the question differs from the document.</li>
+  <li><b>Conversational memory:</b> the agent can retain context during a session.</li>
+  <li><b>No-code orchestration:</b> the full pipeline is built visually in n8n, making it easy to modify, extend, or debug.</li>
+  <li><b>Lightweight interface:</b> a single HTML file with no heavy framework, simple to host and use.</li>
+</ul>
+
+<h2 class="sec">Technology Stack</h2>
+<ul class="bul">
+  <li><b>Frontend:</b> HTML, CSS, JavaScript (index.html)</li>
+  <li><b>Workflow automation:</b> n8n</li>
+  <li><b>Embeddings:</b> Google Gemini Embeddings</li>
+  <li><b>Language model:</b> Google Gemini Chat Model</li>
+  <li><b>Retrieval:</b> n8n Simple Vector Store (in-memory)</li>
+  <li><b>Memory:</b> n8n Simple Memory</li>
+</ul>
+
+<h2 class="sec">Use Cases</h2>
+<ul class="bul">
+  <li>Quickly extracting facts from reports, contracts, or manuals</li>
+  <li>Studying and summarizing academic papers or lecture notes</li>
+  <li>Searching long policy or compliance documents</li>
+  <li>Answering questions about product documentation or specifications</li>
+</ul>
+
+<h2 class="sec">Possible Future Improvements</h2>
+<ul class="bul">
+  <li>Support for multiple files and additional formats (DOCX, TXT)</li>
+  <li>A persistent vector database (such as Pinecone, Qdrant, or Supabase) so documents don’t need to be re-indexed each time</li>
+  <li>Source citations showing which page or passage supported each answer</li>
+  <li>A chat-style history view in the interface</li>
+  <li>Authentication and per-user document storage</li>
+</ul>
+`
+},
 ];
 
 /* ---------- Do not edit below this line ---------- */
