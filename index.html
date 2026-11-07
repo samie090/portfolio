@@ -204,7 +204,7 @@
         <h2>Have a process to automate?</h2>
         <p>Tell me what slows your team down and I will suggest a workflow to fix it.</p>
       </div>
-      <a class="btn" href="mailto:you@example.com">Email Samie</a>
+      <a class="btn" href="mailto:samie_090@yahoo.com">Email Samie</a>
     </div>
   </section>
 </main>
@@ -243,29 +243,72 @@
    ========================================================= */
 const projects = [
   {
-    title: "Lead Nurture Pipeline for a Real Estate Agency",
+    title: "Outbound Lead Automation Workflow (GHL)",
     tag: "GHL",
-    description: "Automated SMS and email follow-up that books viewings and cut response time to under a minute.",
-    image: "images/ghl-lead-nurture.jpg",
-    images: ["images/ghl-lead-nurture.jpg", "images/ghl-pipeline.jpg", "images/ghl-workflow.jpg"],
+    description: "An end-to-end GoHighLevel automation that replaced manual outbound chasing with timed email, SMS, voicemail and call follow-up, plus no-show recovery, billing and onboarding.",
+    image: "images/Call Lead Automation.jpg",
+    images: ["images/Gohighlevel Outbound Lead Workflow Main.png", "images/No Show.png", "images/Gohighlevel Outbound Lead Workflow showed.png"],
     video: "https://www.youtube.com/watch?v=REPLACE_ME",
     details: [
-      "The problem: leads from ads waited hours for a reply, and many went cold.",
-      "What I built: a pipeline that texts every new lead within 60 seconds, follows up by email, and books viewings straight into the agent's calendar.",
-      "Result: faster replies, more booked viewings and no manual chasing."
-    ],
+    "## The Problem",
+    "Outbound sales was heavily manual. Leads from cold lists sat in spreadsheets, and follow-up depended on someone remembering to send emails, make calls, and chase prospects at the right time. This caused inconsistent follow-up, missed calls, and leads dropping out of the pipeline. Prospects who booked meetings were also lost to no-shows because there was no structured reminder or rebooking process. With no single view of where each lead stood, it was hard to know what was working or who needed attention next.",
+
+    "## What I Built",
+    "I designed an end-to-end outbound automation in GoHighLevel, mapped out first as a flow diagram and then built as a set of connected workflows:",
+    "1. **Outbound-lead Tag Added:** Leads are uploaded via CSV and tagged, which triggers a timed email sequence (Day 1, Day 2, Day 5, Day 7, Day 10) alongside voicemail drops and phone call tasks.",
+    "2. **Appointment Status Confirmed:** When a lead books through Calendly, they get a confirmation email within 5 minutes and an SMS reminder 1 hour before the meeting.",
+    "3. **Appointment Status: No Show:** An SMS goes out shortly before the call, followed by a phone call and a rebooking flow if they miss it.",
+    "4. **Appointment Status: Showed / Cancelled:** These statuses route leads to the right next step, with cancellations triggering rebooking.",
+    "5. **Sales Added:** Closed deals trigger a Stripe invoice, and once paid, an onboarding email goes out and an onboarding meeting is booked with its own reminders.",
+    "Leads who aren’t interested or don’t convert are moved into a nurture email sequence instead of being dropped.",
+
+    "## How It Solved the Problem",
+    "The system replaced manual chasing with a consistent, trigger-based process. Every lead now gets timely multichannel contact (email, SMS, voicemail, and calls), reminders reduce no-shows, and no-shows and cancellations are automatically recovered. Billing and onboarding run automatically once a deal closes. The result is less manual work, faster response times, a cleaner pipeline, and a repeatable process that moves a lead from first contact to paying client with minimal hands-on effort. Early workflow stats show leads actively flowing through every stage, from tagging through appointments to closed sales."
+  ],
     tools: ["GoHighLevel", "Twilio", "Google Calendar"]
   },
   {
-    title: "Invoice Extraction to Google Sheets",
+   title: "WhatsApp AI Agent",
     tag: "n8n",
-    description: "An n8n workflow that reads invoices from email, extracts the data with AI and logs it to a sheet.",
-    image: "images/n8n-invoices.jpg",
-    images: ["images/n8n-invoices.jpg", "images/n8n-workflow.jpg"],
+    description: "An AI-powered WhatsApp assistant that answers customer questions, checks product availability and records orders, built with n8n, the Meta WhatsApp Cloud API and Google Sheets.",
+    image: "images/WhatsApp AI Agent.png",
+    images: ["images/1 WhatsApp Agent.png", "images/2 WhatsApp Agent.png", "images/3 WhatsApp Agent.png", "images/4 WhatsApp Agent.png", "images/5 WhatsApp Agent.png"],
+    link: "https://www.youtube.com/watch?v=uVBhKPSUgTE",
     details: [
-      "Invoices arrived by email in different formats and were typed in by hand.",
-      "The workflow watches the inbox, reads each PDF with AI, and adds a clean row to Google Sheets."
-    ],
+    "## Overview",
+    "This project connects a business WhatsApp number to an AI agent so that customers can get instant answers and place orders in a normal chat. Messages are received through Meta's webhook, processed by an LLM-powered agent (MiniMax-M3, via the n8n AI Agent node, with tool calling and conversation memory) with access to business data, and answered through the WhatsApp Cloud API. No human has to be online for routine enquiries.",
+
+    "## Key functionality",
+    "- **Real-time messaging:** Incoming WhatsApp messages trigger the workflow through a Meta webhook, and replies are sent back via the Graph API.",
+    "- **AI conversation handling:** An LLM (MiniMax-M3) agent understands free-form messages and writes natural replies.",
+    "- **Per-customer memory:** Conversation context is stored per sender number, so each customer has a continuous conversation.",
+    "- **Inventory lookup:** The agent reads live product and stock data from Google Sheets.",
+    "- **FAQ answering:** Business policies and common questions are served from a maintained FAQ sheet.",
+    "- **Order capture:** Confirmed orders are written to a Google Sheet for fulfilment.",
+    "- **Event filtering:** Delivery and read receipts sent by Meta are filtered out, so only genuine customer messages reach the AI.",
+
+    "## Technology",
+    "n8n (workflow automation), Meta WhatsApp Cloud API and Graph API, webhooks, an LLM (MiniMax-M3) chat model with tool calling, Google Sheets, and Postman (for API and webhook testing).",
+
+    "## Engineering highlights",
+    "- Configured the end-to-end webhook chain: callback registration, event subscriptions and linking the WhatsApp Business Account to the app.",
+    "- Diagnosed and resolved subscription conflicts that blocked incoming messages, using the Graph API to inspect which app received events.",
+    "- Handled the WhatsApp 24-hour customer service window and message template rules in the design.",
+    "- Used Postman to simulate Meta's verification (GET) and message (POST) requests when debugging.",
+
+    "## Current scope and status",
+    "The project is a working prototype running on Meta's sandbox test number, which can message only a small list of verified recipients. It demonstrates the full request-and-reply cycle, and it is ready to move to a registered business number for live use.",
+
+    "## Future scope",
+    "- **Production rollout:** Register a dedicated business number, complete business verification, and use a permanent System User access token.",
+    "- **Payments:** Add payment links or integrate a payment gateway, with order confirmations sent as approved message templates.",
+    "- **Multilingual support:** Understand and reply in multiple languages, for example English and Urdu.",
+    "- **Rich media:** Send product images and catalogues, and transcribe voice notes.",
+    "- **Human handoff:** Escalate complex or sensitive conversations to a staff member, with the chat history attached.",
+    "- **Scalable data layer:** Replace Google Sheets with a database such as PostgreSQL or Airtable, and connect a CRM.",
+    "- **Analytics and quality:** Track conversation volume, resolution rate and orders, and add automated evaluation of the AI's answers.",
+    "- **Proactive messaging:** Order status updates, restock alerts and reminders using template messages."
+  ],
     tools: ["n8n", "OpenAI", "Gmail", "Google Sheets"]
   }
 ];
@@ -338,7 +381,7 @@ function detailHTML(p) {
     <p class="summary">${esc(p.description)}</p>
     <div class="actions">
       ${p.video ? '<button class="btn play" data-video><span class="play-icon"></span>Play video</button>' : ""}
-      <a class="btn outline" href="mailto:you@example.com?subject=${encodeURIComponent("Project enquiry: " + p.title)}">Ask about a similar project</a>
+      <a class="btn outline" href="mailto:samie_090@yahoo.com?subject=${encodeURIComponent("Project enquiry: " + p.title)}">Ask about a similar project</a>
     </div>
     ${shots ? `<div class="gallery">${shots}</div>` : ""}
     <div class="text">
