@@ -356,7 +356,53 @@ const projects = [
 </ul>
 `,
     tools: ["n8n", "OpenAI", "Gmail", "Google Sheets"]
-  }
+  },
+  {
+  title: "AI Email Agent for Inbox Automation (n8n)",
+  tag: "n8n",
+  description: "An n8n AI agent that reads, sorts and handles a company inbox. It drafts replies for human approval, extracts invoice data into Google Sheets, alerts the team to urgent emails and sends a daily summary.",
+  image: "images/Email Automation.png",
+  html: `
+<h2 class="sec">The Problem</h2>
+<p>A company inbox mixes customer questions, invoices, complaints and a lot of noise such as spam, promotions and newsletters. When this is handled by hand, replies are slow, invoices and complaints can be missed, and invoice details have to be typed into spreadsheets. Emails that never got a reply are forgotten, and the inbox becomes hard to search. The business wanted faster responses without giving up control, so that people stay in charge of every message that goes out.</p>
+
+<h2 class="sec">What I Built</h2>
+<p>I built an AI Email Agent that handles a company's inbox from start to finish. It runs on n8n, so it works around the clock and can be extended or connected to other tools later.</p>
+
+<p><b>1. Reads every email and filters the noise</b><br>The agent monitors the Gmail inbox (Outlook is also supported) and skips spam, promotions and newsletters, so the team only sees what matters.</p>
+
+<p><b>2. Sorts each email with AI</b><br>Every email is classified into one of four types: question or request, invoice or payment, complaint or urgent, or everything else. When the AI is unsure, it treats the email as urgent, so nothing important is missed.</p>
+
+<p><b>3. Handles each type differently</b></p>
+<ul class="bul">
+  <li><b>Questions and requests:</b> The AI drafts a reply using the knowledge base (FAQs, prices, policies). The draft goes to a person for approval with Approve and Disapprove buttons, and the reply is sent only after approval.</li>
+  <li><b>Invoices and payments:</b> The AI extracts the vendor, invoice number, amount, currency and due date, then saves them to a Google Sheet with the sender and a link to the original email. This sheet can feed an audit agent directly.</li>
+  <li><b>Complaints and urgent emails:</b> A person is alerted immediately with the sender, subject, a preview and a direct link to the email. Alerts can go out by email, Slack or WhatsApp.</li>
+  <li><b>Everything else:</b> The email is labelled by topic and archived, so it stays easy to search later.</li>
+</ul>
+
+<p><b>4. Follow-ups</b><br>The agent tracks emails that received no reply and reminds the team or drafts a chase email, which goes through the same approval step.</p>
+
+<p><b>5. Daily summary and action log</b><br>Every action is recorded in a log. At the end of each day, a short summary email shows what came in, how it was sorted and what was done.</p>
+
+<p><b>Built-in safety rules</b></p>
+<ul class="bul">
+  <li><b>Human approval:</b> The agent drafts replies, but nothing is sent without a person's approval.</li>
+  <li><b>Knowledge base only:</b> The AI answers from approved information. If it cannot find an answer, it flags the email for a human instead of guessing.</li>
+  <li><b>Full traceability:</b> Every action is logged, so you can check what happened and why.</li>
+  <li><b>Error alerts:</b> If any step fails, the team is notified.</li>
+</ul>
+
+<p><b>The result</b></p>
+<ul class="bul">
+  <li>Faster response times, with replies drafted in seconds</li>
+  <li>No missed invoices or complaints</li>
+  <li>Invoice data captured automatically, with no manual entry</li>
+  <li>A cleaner, searchable inbox</li>
+  <li>Full control, since people stay in charge of every outgoing message</li>
+</ul>
+`
+},
 ];
 
 /* ---------- Do not edit below this line ---------- */
