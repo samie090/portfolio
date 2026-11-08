@@ -486,6 +486,114 @@ const projects = [
 </ul>
 `
 },
+  {
+  title: "Voice AI Order Agent for an Online Flower Shop",
+  tag: "n8n",
+  description: "An end-to-end voice AI agent that lets flower shop customers browse products, place orders, check status and update or cancel orders by phone in Urdu or English. Built with n8n, MCP, Supabase vector store (RAG), Google Gemini embeddings, Google Sheets and VAPI.",
+  image: "images/Voice Agent VAPI English.png",
+  images: ["images/Voice Agent-MCP.png", "images/Voice Agent-Get Vectors.png", "images/Voice Agent-Create Order.png", "images/Voice Agent-Update Order.png", "images/Voice Agent-Web Scrapping.png", "images/Voice Agent VAPI English.png", "images/Voice Agent VAPI.png"],
+  video: "https://youtu.be/REPLACE_ME",
+  html: `
+<h2 class="sec">Overview</h2>
+<p>This is an end-to-end voice AI agent that lets customers of a flower shop (Flower Bouquet) handle everything over a phone-style call: browsing products and prices, placing new orders, checking order status, and updating or cancelling existing orders. The customer speaks naturally in Urdu, English or another language. The agent understands the request, turns it into structured English data, and triggers the right n8n workflow through an MCP server. It then replies with a natural spoken answer.</p>
+<p><b>Built with:</b> n8n, MCP (Model Context Protocol), Supabase Vector Store (RAG), Google Gemini embeddings, Google Sheets, VAPI</p>
+
+<h2 class="sec">The Problem</h2>
+<p>Small online businesses depend on staff to answer calls and WhatsApp messages about product availability, prices, order bookings and last-minute changes. This is repetitive, hard to scale, and error-prone, especially when customers speak in mixed languages and give addresses and phone numbers verbally. The goal was to automate this with a voice agent that is reliable, never invents product information, and never writes incomplete data into the order system.</p>
+
+<h2 class="sec">How It Works</h2>
+<ul class="bul">
+  <li><b>1. Voice layer (VAPI):</b> VAPI handles speech-to-text and text-to-speech, and runs the conversation with a carefully designed system prompt. The assistant detects what the customer wants (inquiry, new order, status check, update or cancel) and decides which tool to call.</li>
+  <li><b>2. MCP server (n8n):</b> An MCP Server Trigger in n8n exposes three tools to the voice agent:
+    <ul class="bul">
+      <li>Get From Supabase for product, price and order lookups</li>
+      <li>Voice Agent: Create Order for booking new orders</li>
+      <li>Voice Agent: Update Order for modifying or cancelling orders</li>
+    </ul>
+  </li>
+  <li><b>3. Knowledge base (RAG):</b> A scheduled scraping workflow keeps the product catalogue current:
+    <ul class="bul">
+      <li>A Schedule Trigger starts the workflow.</li>
+      <li>It scrapes the shop’s website and extracts all product URLs.</li>
+      <li>A Loop Over Items node visits each product page and extracts the specific tag data (name, price, description).</li>
+      <li>The data is structured into variables and sent to the Google Gemini embeddings API.</li>
+      <li>The text and embedding are inserted into a Supabase vector table, with a 2-second wait between iterations to respect rate limits.</li>
+    </ul>
+  </li>
+</ul>
+<p>When a customer asks “What bouquets do you have?”, the agent answers from this vector store rather than from the model’s memory, so product and price answers come from the real catalogue.</p>
+<ul class="bul">
+  <li><b>4. Order workflows (Google Sheets):</b>
+    <ul class="bul">
+      <li><b>Create Order:</b> a Code node structures the incoming data (customer name, phone, city, full address, product, notes). The workflow reads the last Order ID from the sheet, generates the next one, merges it with the order data and appends a new row.</li>
+      <li><b>Update Order:</b> takes the Order ID, the field to change (address, phone, product or status) and the new value. It then finds the matching row and updates it. Cancellation sets the status to Cancelled and records the reason.</li>
+    </ul>
+  </li>
+</ul>
+
+<h2 class="sec">Key Features</h2>
+<ul class="bul">
+  <li><b>Multilingual voice input:</b> The customer can speak in Urdu or English. The agent converts the request to English for the workflows. The same design can be built for any other language by changing the transcriber, voice and prompt.</li>
+  <li><b>RAG-based product answers:</b> Responses come from the scraped catalogue in the Supabase vector store, which reduces hallucinated products and prices.</li>
+  <li><b>Strict data collection:</b> The prompt forbids calling any tool with empty or placeholder values. The agent must ask a question, wait for the real answer, and only then call the tool.</li>
+  <li><b>Guided order flow:</b> The agent asks one question at a time (product, city, address with landmark, name, phone number) and validates the delivery city against the supported list: Lahore, Karachi, Islamabad and Rawalpindi.</li>
+  <li><b>Order lookup by phone number:</b> If a customer forgets their Order ID, the agent finds it from their phone number before updating anything.</li>
+  <li><b>Update and cancel flows:</b> Customers can change address, phone number or product, or cancel with a reason, and each update is confirmed back in natural speech.</li>
+  <li><b>Customization path:</b> For custom bouquets, the order is saved with a note that a representative will call back, instead of being treated as a standard order.</li>
+  <li><b>Voice-safe output:</b> The agent never reads JSON, brackets or code aloud. It turns tool results into short, natural sentences.</li>
+  <li><b>Error handling:</b> The prompt defines responses for tool failures, unsupported cities, order IDs not found, incomplete addresses and missing update data.</li>
+  <li><b>Change window:</b> After booking, the agent tells the customer they can update or cancel within 20 minutes.</li>
+</ul>
+
+<h2 class="sec">Prompt Engineering Highlights</h2>
+<p>The system prompt is structured like a small rulebook:</p>
+<ul class="bul">
+  <li>Identity and language rules, including a list of words that must stay in English so text-to-speech pronounces them correctly.</li>
+  <li>Iron law of data collection, with correct and wrong flow examples.</li>
+  <li>Tool triggering logic, with when-to-trigger phrases, data formats and full conversation scenarios for each tool.</li>
+  <li>Checkpoints before update_order: do I have the real Order ID, do I know what to change, do I have the actual new value, and is it real data and not a placeholder.</li>
+  <li>Data formatting rules (English or Roman script only in data fields, landmarks in addresses, valid cities).</li>
+  <li>Output format rule: tools use JSON internally, the voice output is plain natural language only.</li>
+</ul>
+
+<h2 class="sec">Tech Stack</h2>
+<ul class="bul">
+  <li><b>Voice agent:</b> VAPI (speech-to-text, text-to-speech, conversation)</li>
+  <li><b>Orchestration:</b> n8n workflows, MCP Server Trigger</li>
+  <li><b>Knowledge base:</b> Supabase vector store, Google Gemini embeddings</li>
+  <li><b>Data ingestion:</b> n8n HTTP Request, HTML Extract and Code nodes (scheduled scraping)</li>
+  <li><b>Order storage:</b> Google Sheets</li>
+  <li><b>Connectivity:</b> ngrok tunnel for local n8n during development</li>
+</ul>
+
+<h2 class="sec">Example Conversation</h2>
+<ul class="bul">
+  <li><b>Customer:</b> “What bouquets do you have, and what are the prices?” The agent calls Get From Supabase and reads out the products and prices.</li>
+  <li><b>Customer:</b> “I’d like to order the Red Roses Bouquet.” The agent collects city, address, name and phone number one by one, then calls Create Order and reads out the new Order ID.</li>
+  <li><b>Customer:</b> “I need to change my address.” The agent collects the Order ID and the new address, then calls Update Order and confirms the change.</li>
+</ul>
+
+<h2 class="sec">Challenges and Solutions</h2>
+<ul class="bul">
+  <li><b>Tools being called with empty values:</b> solved with explicit rules, checkpoints and wrong/right examples in the prompt.</li>
+  <li><b>Mixed-language speech:</b> solved by restricting data fields to English or Roman script and keeping technical words in English for clearer text-to-speech.</li>
+  <li><b>Order ID generation:</b> solved by reading the last row of the sheet and incrementing the ID before appending.</li>
+  <li><b>Catalogue freshness:</b> solved with a scheduled scraper that regenerates embeddings.</li>
+  <li><b>Rate limits during embedding:</b> solved with a wait node inside the loop.</li>
+</ul>
+
+<h2 class="sec">Current Limitations and Next Steps</h2>
+<ul class="bul">
+  <li>The 20-minute change window is communicated by the agent but not yet enforced in the workflow. A created-at timestamp in the sheet, checked in the Update Order Code node, would enforce it.</li>
+  <li>Order status and order lookup by phone number should be backed by a dedicated lookup path on the Google Sheet.</li>
+  <li>The production deployment should use a stable hosted n8n URL instead of a development tunnel.</li>
+  <li>Possible additions: payment links, delivery tracking, WhatsApp or SMS confirmations, a CRM or dashboard, and more languages.</li>
+</ul>
+
+<h2 class="sec">Use Cases Beyond Flowers</h2>
+<p>The same architecture works for any small business that takes orders or bookings by phone: restaurants, bakeries, clinics, salons, repair shops and e-commerce stores. Only the scraped knowledge base, the order fields and the prompt need to change.</p>
+`
+},
 ];
 
 /* ---------- Do not edit below this line ---------- */
