@@ -597,7 +597,7 @@ const projects = [
   title: "AI-Powered Lead Qualification & Follow-Up Automation (GHL)",
   tag: "GHL",
   description: "A GoHighLevel system for CourseYourself that captures leads through a form, uses AI to score and segment them by business growth intent, routes qualified leads through the CRM pipeline, and automates discovery-call follow-up and appointment-based routing.",
-  image: "images/Lead-Qualification.png",
+  image: "images/IG Lead Nurture.png",
   html: `
 <h2 class="sec">The Problem</h2>
 <p>Leads coming in through a website form were not all equal, but there was no quick way to tell which prospects were serious about growing their business. Someone had to review each lead by hand, decide who deserved a discovery call, and remember to follow up. This slowed down response times and let promising leads cool off. Handling discovery calls and appointments was also inconsistent, because the next step depended on someone checking the calendar and the pipeline manually.</p>
@@ -615,6 +615,47 @@ const projects = [
 
 <h2 class="sec">Technologies</h2>
 <p>GoHighLevel (GHL), AI Agent, Workflow Automation, CRM, Conditional Logic, Email Automation, Pipeline Management, Appointment Automation</p>
+`
+},{
+  title: "Instagram Lead Nurturing Automation (GoHighLevel)",
+  tag: "GHL",
+  description: "A GoHighLevel workflow that turns Instagram comments and DMs into qualified leads. It captures emails, delivers a lead magnet, handles Meta's messaging window, and nurtures leads toward booking a discovery call.",
+  image: "images/instagram-automation-cover.jpg",
+  images: ["images/instagram-automation-cover.jpg", "images/instagram-automation-workflow.jpg"],
+  video: "https://youtu.be/REPLACE_ME",
+  html: `
+<h2 class="sec">The Problem</h2>
+<p>Leads who showed interest on Instagram by commenting a keyword or sending a DM needed a quick, consistent reply. Handled by hand, replies were slow, emails were not collected reliably, and leads who went quiet were forgotten. Meta's messaging window also limits when a follow-up can be sent, so the timing of every message had to be planned. Without tags and tracking, it was hard to see which leads had given their email or booked a call.</p>
+
+<h2 class="sec">What I Built</h2>
+<p>I built a lead engagement and qualification workflow in GoHighLevel for Instagram comments and Instagram DM replies. It automates the first conversation and moves the lead toward a discovery call.</p>
+<ul class="bul">
+  <li><b>Keyword trigger:</b> A lead comments a specific keyword on a post or messages directly through Instagram DM.</li>
+  <li><b>Comment and DM replies:</b> For a comment, the workflow replies publicly asking the lead to check their DM. For a direct DM, it replies in the conversation instead.</li>
+  <li><b>Tagging:</b> Tags are applied in both cases so leads can be identified and segmented inside the CRM.</li>
+  <li><b>Email capture:</b> The lead is asked for their email address in exchange for a lead magnet. The workflow waits for the reply, and once the email is sent it is saved automatically to the contact record.</li>
+  <li><b>Lead magnet delivery:</b> After the email is collected, the resource is delivered, with a fallback link path if needed.</li>
+  <li><b>Non-responsive leads:</b> If the lead does not reply, the workflow waits 23 hours, which works within Meta's messaging limits, and then sends another follow-up.</li>
+  <li><b>Discovery-call nurture:</b> After the email is collected, the lead is encouraged to book a discovery call. A one-day wait is followed by a condition that checks whether the call was booked. If it was not, another message is sent.</li>
+  <li><b>Workflow handoffs:</b> The sequence connects to other workflows for continued nurturing.</li>
+</ul>
+
+<h2 class="sec">Technical Contribution</h2>
+<p>I designed and implemented the workflow architecture in GoHighLevel, including:</p>
+<ul class="bul">
+  <li>Instagram triggers and keyword-based routing</li>
+  <li>If/Else conditional branching and response-dependent branches for engaged and non-responsive leads</li>
+  <li>Contact tags and contact-field checks, including email validation</li>
+  <li>Automated DM and comment responses</li>
+  <li>Wait and timing logic, including the 23-hour delay</li>
+  <li>Email delivery, fallback link delivery and workflow handoffs</li>
+</ul>
+
+<h2 class="sec">Technologies</h2>
+<p>GoHighLevel (GHL), Instagram triggers, Workflow Automation, CRM, Conditional Logic, Contact Tags and Fields, Email Automation, Appointment Tracking</p>
+
+<h2 class="sec">A Note on the Screenshots</h2>
+<p>The screenshots show only part of the complete workflow, because several workflow sections work together to solve the overall lead-generation and nurturing problem. I no longer have access to the GoHighLevel account of the company I worked with, so I cannot show the full setup.</p>
 `
 },
 ];
