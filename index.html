@@ -688,6 +688,108 @@ const projects = [
 <p>The screenshots show only part of the complete workflow, because several workflow sections work together to solve the overall lead-generation and nurturing problem. I no longer have access to the GoHighLevel account of the company I worked with, so I cannot show the full setup.</p>
 `
 },
+  {
+  title: "AI Real Estate Lead Automation (n8n)",
+  tag: "n8n",
+  description: "An n8n system that turns a real estate enquiry into a validated, de-duplicated, AI-scored lead within seconds. It records leads in a Google Sheet CRM, books site visits for hot leads, and confirms by WhatsApp or SMS.",
+  image: "images/Real Estate Agent Main.png",
+  images: ["images/Real Estate Agent 1.png", "images/Real Estate Agent 2.png", "images/Real Estate Agent 3.png", "images/Real Estate Agent 4.png"],
+  video: "https://youtu.be/REPLACE_ME",
+  html: `
+<h2 class="sec">Purpose</h2>
+<p>Real estate enquiries lose value quickly. A lead who asks for a site visit this week and is ready to buy within 30 days will go to a competitor if nobody replies for a day. Handling these leads by hand is slow and inconsistent: someone has to copy details into a sheet, decide which leads are serious, write a reply, check a calendar, and message the sales team.</p>
+<p>This system automates that whole path. Its goals are:</p>
+<ul class="bul">
+  <li><b>Respond instantly:</b> Every enquiry gets a personalised follow-up without waiting for a person.</li>
+  <li><b>Prioritise by quality:</b> An AI model scores each lead so the sales team spends time on the serious buyers first.</li>
+  <li><b>Avoid duplicates:</b> The same person enquiring twice does not create two records or trigger two sets of messages.</li>
+  <li><b>Book site visits automatically:</b> High-intent leads get a calendar slot and a confirmation without back-and-forth.</li>
+  <li><b>Keep one source of truth:</b> Every lead and its status is recorded in a Google Sheet that works as a lightweight CRM.</li>
+</ul>
+
+<h2 class="sec">System Overview</h2>
+<p>A lead submits an enquiry through a form. The form sends the data to an n8n workflow. The workflow cleans and validates it, checks whether the lead already exists, scores it with AI, saves it to the CRM sheet, and then routes it by score. Hot leads are booked into the calendar, receive a confirmation message, and the sales team is notified by SMS.</p>
+
+<h2 class="sec">Tools Used</h2>
+<ul class="bul">
+  <li><b>Website enquiry form (HTML) or n8n Form Trigger:</b> Captures the lead</li>
+  <li><b>n8n:</b> Runs the workflow</li>
+  <li><b>Google Sheets:</b> CRM database</li>
+  <li><b>Google Gemini (via the AI agent node):</b> Scores and qualifies the lead, and writes the follow-up message</li>
+  <li><b>Google Calendar:</b> Checks availability and books site visits</li>
+  <li><b>Twilio:</b> Sends the WhatsApp or SMS confirmation and the sales team alert</li>
+</ul>
+
+<h2 class="sec">Data Captured</h2>
+<p>The enquiry form collects the full name, phone number (with country code), email address, budget, and property type of interest. The workflow also carries location, timeline, a free-text message, and a source label (for example "Direct Enquiry" or "Website Form"). Where the form does not ask for location or timeline, they are filled with "Not specified".</p>
+
+<h2 class="sec">Workflow, Step by Step</h2>
+<ul class="bul">
+  <li><b>Step 1, Lead Intake Webhook:</b> Receives the enquiry as a POST request with JSON data. This is the entry point. A production URL is used once the workflow is published, and a test URL while building.</li>
+  <li><b>Step 2, Validate Lead (Code node):</b> Cleans and standardises the incoming data: trims text, formats the phone number, lowercases the email, checks that required fields are present, and adds a validated_at timestamp. Bad data is stopped here, before it can pollute the CRM.</li>
+  <li><b>Step 3, Sheets: Read All Leads:</b> Reads every existing row from the Google Sheet so the next step can compare against them.</li>
+  <li><b>Step 4, Duplicate Check (Code node):</b> Compares the new lead's phone number and email against all existing rows. Phone numbers are normalised (spaces, dashes and brackets removed) and emails are compared case-insensitively. A match on either one marks the lead as a duplicate. The node outputs is_duplicate, which fields matched, and details of the existing record.</li>
+  <li><b>Step 5, Is New Lead? (IF node):</b> Splits the flow. New leads continue to scoring. Duplicates take the other branch and do not trigger a second round of messages or bookings.</li>
+  <li><b>Step 6, AI Lead Scorer (AI agent with structured output):</b> The AI is prompted as a real estate lead qualification expert. It receives the lead details and returns a structured result through an output parser:
+    <ul class="bul">
+      <li>lead_score (0 to 100)</li>
+      <li>qualification_status (for example HOT)</li>
+      <li>budget_assessment</li>
+      <li>timeline and intent_strength</li>
+      <li>property_recommendations (for example matching 3 BHK options in suitable Surat areas)</li>
+      <li>follow_up_message (a personalised reply to the lead)</li>
+    </ul>
+  </li>
+  <li><b>Step 7, Sheets: Upsert Lead:</b> Writes the lead and its AI results to the CRM sheet. It is an append-or-update operation that matches on the Contact Number column, so a repeat phone number updates the existing row instead of adding a new one.</li>
+  <li><b>Step 8, Route by Score (Switch node):</b> Sends the lead down a branch based on its qualification status and score. HOT leads get the full automatic booking flow described below. Lower-scoring leads (WARM and COLD) follow the same pattern with lighter follow-up.</li>
+</ul>
+
+<h2 class="sec">HOT Branch (High-Intent Leads)</h2>
+<ul class="bul">
+  <li><b>Get Calendar Events:</b> Reads the sales calendar for the upcoming days so existing bookings are known. It is set to always output data, so an empty calendar does not stop the workflow.</li>
+  <li><b>Find Free Slot (Code node):</b> Compares the events against candidate times and picks the first free slot. It reports slot_found, the start and end time, and how many conflicts it skipped.</li>
+  <li><b>Book Appointment (Google Calendar):</b> Creates the site visit event in the same calendar that was checked, using the chosen slot.</li>
+  <li><b>Send Confirmation (Twilio WhatsApp):</b> Sends the lead a confirmation message with the AI-written follow-up and the booked visit time.</li>
+  <li><b>Notify Sales Team (Twilio SMS):</b> Alerts the sales manager with the lead's details, score and booked slot so they can prepare for the visit.</li>
+  <li><b>Update CRM (Google Sheets):</b> Records the outcome on the lead's row: booking status, whether the sales team was notified, the last action taken, and the last-updated time.</li>
+</ul>
+
+<h2 class="sec">CRM Sheet Structure</h2>
+<p>The Google Sheet acts as the CRM. Its columns include: Client Name, Email, Contact Number, Budget, Location, Property Type, Lead Score, Qualification Status, Recommendations, Source, Created At, Booking Status, Sales Team Notified, Last Action, and Last Updated At. Header names must have no leading or trailing spaces, because n8n matches columns by exact header text.</p>
+
+<h2 class="sec">Design Decisions</h2>
+<ul class="bul">
+  <li><b>Duplicate check on phone and email:</b> Using both catches people who reuse one but change the other.</li>
+  <li><b>Upsert on phone number:</b> Keeps one row per person and lets later steps update the same record.</li>
+  <li><b>Structured AI output:</b> Forcing the AI to return fixed fields means later nodes can rely on lead_score and qualification_status without parsing free text.</li>
+  <li><b>Booking only for HOT leads:</b> Calendar time and sales attention are limited, so only the strongest leads receive an automatic visit.</li>
+  <li><b>Same calendar for checking and booking:</b> Prevents double-booking.</li>
+</ul>
+
+<h2 class="sec">Problems Solved During the Build</h2>
+<ul class="bul">
+  <li><b>Name, email and budget not saved to the sheet:</b> Caused by stray spaces in the Google Sheet headers. Fixed by retyping the headers without spaces and refreshing the column list in n8n.</li>
+  <li><b>Publish and Unpublish greyed out:</b> Caused by configuration errors in the Twilio nodes and a workflow that was not yet published. Fixed by adding the Twilio credential and filling in From, To and Message.</li>
+  <li><b>Calendar node returned nothing and the workflow stopped:</b> The node only reads events, and an empty result halts n8n. Fixed by turning on Always Output Data and adding a Create event node.</li>
+  <li><b>Book Appointment returned "Not Found":</b> The node pointed at a calendar the credential could not access. Fixed by using the same credential and calendar in both calendar nodes.</li>
+  <li><b>AI Lead Scorer showed no output:</b> The lead was treated as a duplicate and went down the other branch. Fixed by testing with a new phone number and email.</li>
+  <li><b>AI node warned about output format:</b> Structured output was on without an output parser attached. Fixed by attaching a Structured Output Parser with the expected fields.</li>
+  <li><b>Slot times looked wrong:</b> Times were generated in UTC (Z suffix). Fixed by building slot times with the local timezone offset.</li>
+</ul>
+
+<h2 class="sec">Next Steps</h2>
+<ul class="bul">
+  <li>Finalise and document the WARM, COLD and duplicate branches.</li>
+  <li>Add error handling, such as a workflow that alerts the team when a node fails.</li>
+  <li>Add rate limiting or a CAPTCHA to the public form to reduce spam.</li>
+  <li>Decide how to handle leads when no free slot is found.</li>
+  <li>Keep credentials (Google, Twilio, Gemini) current, and move from the test webhook URL to the production URL after publishing.</li>
+</ul>
+
+<h2 class="sec">Summary</h2>
+<p>The system turns a website enquiry into a scored, recorded and followed-up lead within seconds. It removes manual data entry, prevents duplicate handling, gives the sales team a prioritised list, and books site visits for the most promising buyers automatically, while keeping every step visible in a single Google Sheet.</p>
+`
+},
 ];
 
 /* ---------- Do not edit below this line ---------- */
